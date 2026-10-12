@@ -1,0 +1,72 @@
+name: Build APK
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.7
+      - name: Crea progetto Android
+        run: |
+          D=p/app/src/main
+          mkdir -p $D/assets $D/java/it/gym/tracker
+          cp index.html $D/assets/index.html
+          cat > p/settings.gradle <<'E'
+          pluginManagement{repositories{google();mavenCentral();gradlePluginPortal()}}
+          dependencyResolutionManagement{repositories{google();mavenCentral()}}
+          rootProject.name="GymTracker"
+          include ':app'
+          E
+          echo "plugins{id 'com.android.application' version '8.3.2' apply false}" > p/build.gradle
+          cat > p/app/build.gradle <<'E'
+          plugins{id 'com.android.application'}
+          android{
+           namespace 'it.gym.tracker'
+           compileSdk 34
+           defaultConfig{applicationId 'it.gym.tracker';minSdk 24;targetSdk 34;versionCode 1;versionName '1.0'}
+           compileOptions{sourceCompatibility JavaVersion.VERSION_17;targetCompatibility JavaVersion.VERSION_17}
+          }
+          E
+          cat > $D/AndroidManifest.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+           <uses-permission android:name="android.permission.VIBRATE"/>
+           <application android:label="Gym Tracker" android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+            <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden">
+             <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+            </activity>
+           </application>
+          </manifest>
+          E
+          cat > $D/java/it/gym/tracker/MainActivity.java <<'E'
+          package it.gym.tracker;
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          public class MainActivity extends Activity {
+            WebView w;
+            @Override protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              w = new WebView(this);
+              WebSettings s = w.getSettings();
+              s.setJavaScriptEnabled(true);
+              s.setDomStorageEnabled(true);
+              setContentView(w);
+              w.loadUrl("file:///android_asset/index.html");
+            }
+          }
+          E
+      - name: Compila
+        working-directory: p
+        run: gradle assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GymTracker-apk
+          path: p/app/build/outputs/apk/debug/app-debug.apk
