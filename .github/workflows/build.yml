@@ -17,6 +17,19 @@ jobs:
           D=p/app/src/main
           mkdir -p $D/assets $D/java/it/gym/tracker
           cp index.html $D/assets/index.html
+          mkdir -p $D/res/drawable-nodpi $D/res/values $D/res/mipmap-anydpi-v26
+          cp icon.png $D/res/drawable-nodpi/ic_fg.png
+          cat > $D/res/values/colors.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources><color name="ic_bg">#191D26</color></resources>
+          E
+          cat > $D/res/mipmap-anydpi-v26/ic_launcher.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+           <background android:drawable="@color/ic_bg"/>
+           <foreground android:drawable="@drawable/ic_fg"/>
+          </adaptive-icon>
+          E
           echo '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' | base64 -d > p/app/gym.p12
           cat > p/settings.gradle <<'E'
           pluginManagement{repositories{google();mavenCentral();gradlePluginPortal()}}
@@ -30,7 +43,7 @@ jobs:
           android{
            namespace 'it.gym.tracker'
            compileSdk 34
-           defaultConfig{applicationId 'it.gym.tracker';minSdk 24;targetSdk 34;versionCode 2;versionName '2.0'}
+           defaultConfig{applicationId 'it.gym.tracker';minSdk 26;targetSdk 34;versionCode 4;versionName '4.0'}
            signingConfigs{debug{storeFile file('gym.p12');storePassword 'android';keyAlias 'gym';keyPassword 'android';storeType 'pkcs12'}}
            compileOptions{sourceCompatibility JavaVersion.VERSION_17;targetCompatibility JavaVersion.VERSION_17}
           }
@@ -39,7 +52,7 @@ jobs:
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
            <uses-permission android:name="android.permission.VIBRATE"/>
-           <application android:label="Gym Tracker" android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+           <application android:label="Gym Tracker" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
             <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden">
              <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
             </activity>
@@ -52,6 +65,7 @@ jobs:
           import android.content.Intent;
           import android.net.Uri;
           import android.os.Bundle;
+          import android.webkit.JavascriptInterface;
           import android.webkit.ValueCallback;
           import android.webkit.WebChromeClient;
           import android.webkit.WebSettings;
@@ -65,6 +79,18 @@ jobs:
               WebSettings s = w.getSettings();
               s.setJavaScriptEnabled(true);
               s.setDomStorageEnabled(true);
+              w.addJavascriptInterface(new Object() {
+                @JavascriptInterface public void share(final String t) {
+                  runOnUiThread(new Runnable() {
+                    public void run() {
+                      Intent i = new Intent(Intent.ACTION_SEND);
+                      i.setType("text/plain");
+                      i.putExtra(Intent.EXTRA_TEXT, t);
+                      startActivity(Intent.createChooser(i, "Condividi scheda"));
+                    }
+                  });
+                }
+              }, "Android");
               w.setWebChromeClient(new WebChromeClient() {
                 @Override public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> c, FileChooserParams p) {
                   if (cb != null) cb.onReceiveValue(null);
